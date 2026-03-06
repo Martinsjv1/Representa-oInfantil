@@ -1,0 +1,372 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Catálogo Representante</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+margin:0;
+background:linear-gradient(135deg,#0f172a,#020617);
+color:white;
+}
+
+/* HEADER */
+
+header{
+background:rgba(30,58,138,0.6);
+backdrop-filter:blur(12px);
+padding:18px 30px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:1px solid rgba(255,255,255,0.08);
+position:sticky;
+top:0;
+z-index:100;
+}
+
+header h1{
+margin:0;
+font-size:20px;
+letter-spacing:1px;
+}
+
+.cart-icon{
+background:linear-gradient(45deg,#2563eb,#3b82f6);
+border:none;
+padding:10px 18px;
+border-radius:30px;
+color:white;
+font-weight:bold;
+cursor:pointer;
+transition:0.3s;
+}
+
+.cart-icon:hover{
+transform:scale(1.08);
+}
+
+/* CONTAINER */
+
+.container{
+padding:40px;
+max-width:1200px;
+margin:auto;
+}
+
+/* GRID */
+
+.product-grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+gap:25px;
+}
+
+/* CARD */
+
+.product-card{
+background:rgba(255,255,255,0.05);
+border:1px solid rgba(255,255,255,0.08);
+border-radius:15px;
+padding:18px;
+text-align:center;
+backdrop-filter:blur(10px);
+transition:0.3s;
+}
+
+.product-card:hover{
+transform:translateY(-8px);
+box-shadow:0 20px 50px rgba(0,0,0,0.4);
+}
+
+.product-card img{
+width:100%;
+height:200px;
+object-fit:cover;
+border-radius:10px;
+}
+
+.product-title{
+font-size:15px;
+margin:10px 0;
+}
+
+.product-price{
+color:#60a5fa;
+font-weight:bold;
+font-size:18px;
+margin-bottom:12px;
+}
+
+.btn-add{
+background:linear-gradient(45deg,#2563eb,#3b82f6);
+border:none;
+padding:10px;
+width:100%;
+border-radius:8px;
+color:white;
+font-weight:bold;
+cursor:pointer;
+transition:0.3s;
+}
+
+.btn-add:hover{
+transform:scale(1.05);
+}
+
+/* CARRINHO */
+
+#cart-sidebar{
+position:fixed;
+right:-350px;
+top:0;
+width:320px;
+height:100%;
+background:#020617;
+box-shadow:-5px 0 30px rgba(0,0,0,0.6);
+transition:0.4s;
+padding:25px;
+overflow-y:auto;
+z-index:1000;
+}
+
+#cart-sidebar.open{
+right:0;
+}
+
+.close-cart{
+background:none;
+border:none;
+color:white;
+font-size:22px;
+cursor:pointer;
+float:right;
+}
+
+.cart-item{
+display:flex;
+justify-content:space-between;
+padding:10px 0;
+border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+#checkout-btn{
+background:linear-gradient(45deg,#22c55e,#4ade80);
+border:none;
+padding:14px;
+width:100%;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+margin-top:20px;
+font-size:16px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Moda Infantil Rep</h1>
+<button class="cart-icon" onclick="toggleCart()">
+Sacola (<span id="cart-count">0</span>)
+</button>
+</header>
+
+<div class="container">
+
+<h2>Lançamentos</h2>
+
+<div class="product-grid">
+
+<!-- PRODUTO 1 -->
+
+<div class="product-card">
+<img src="https://images.unsplash.com/photo-1519238263530-99abca96738b?w=400">
+<h3 class="product-title">Conjunto Moletom Menina</h3>
+<p class="product-price">R$ 89,90</p>
+<button class="btn-add"
+onclick="adicionarAoCarrinho('Conjunto Moletom Menina',89.90)">
+Adicionar
+</button>
+</div>
+
+<!-- PRODUTO 2 -->
+
+<div class="product-card">
+<img src="https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?w=400">
+<h3 class="product-title">Camiseta Dino Menino</h3>
+<p class="product-price">R$ 35,00</p>
+<button class="btn-add"
+onclick="adicionarAoCarrinho('Camiseta Dino Menino',35)">
+Adicionar
+</button>
+</div>
+
+<!-- PRODUTO 3 -->
+
+<div class="product-card">
+<img src="https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?w=400">
+<h3 class="product-title">Vestido Florido</h3>
+<p class="product-price">R$ 110,00</p>
+<button class="btn-add"
+onclick="adicionarAoCarrinho('Vestido Florido',110)">
+Adicionar
+</button>
+</div>
+
+<!-- PRODUTO 4 -->
+
+<div class="product-card">
+<img src="https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=400">
+<h3 class="product-title">Jaqueta Jeans Infantil</h3>
+<p class="product-price">R$ 129,90</p>
+<button class="btn-add"
+onclick="adicionarAoCarrinho('Jaqueta Jeans Infantil',129.90)">
+Adicionar
+</button>
+</div>
+
+<!-- PRODUTO 5 -->
+
+<div class="product-card">
+<img src="https://images.unsplash.com/photo-1604917869287-3ae73c77e227?w=400">
+<h3 class="product-title">Conjunto Moletom Menino</h3>
+<p class="product-price">R$ 95,00</p>
+<button class="btn-add"
+onclick="adicionarAoCarrinho('Conjunto Moletom Menino',95)">
+Adicionar
+</button>
+</div>
+
+<!-- PRODUTO 6 -->
+
+<div class="product-card">
+<img src="https://images.unsplash.com/photo-1542060748-10c28b62716f?w=400">
+<h3 class="product-title">Vestido Inverno Infantil</h3>
+<p class="product-price">R$ 119,00</p>
+<button class="btn-add"
+onclick="adicionarAoCarrinho('Vestido Inverno Infantil',119)">
+Adicionar
+</button>
+</div>
+
+</div>
+</div>
+
+<!-- CARRINHO -->
+
+<div id="cart-sidebar">
+
+<button class="close-cart" onclick="toggleCart()">✕</button>
+
+<h2>Seu Pedido</h2>
+
+<div id="cart-items">
+<p>Seu carrinho está vazio.</p>
+</div>
+
+<h3>Total: R$ <span id="cart-total">0.00</span></h3>
+
+<button id="checkout-btn"
+onclick="enviarPedidoWhatsApp()">
+Enviar Pedido no WhatsApp
+</button>
+
+</div>
+
+<script>
+
+let carrinho = [];
+let total = 0;
+
+function toggleCart(){
+document.getElementById('cart-sidebar').classList.toggle('open');
+}
+
+function adicionarAoCarrinho(nome,preco){
+
+carrinho.push({nome:nome,preco:preco});
+total += preco;
+
+atualizarCarrinho();
+
+document.getElementById('cart-sidebar').classList.add('open');
+
+}
+
+function atualizarCarrinho(){
+
+document.getElementById('cart-count').innerText = carrinho.length;
+
+document.getElementById('cart-total').innerText = total.toFixed(2);
+
+let html = '';
+
+if(carrinho.length === 0){
+
+html = '<p>Seu carrinho está vazio.</p>';
+
+}else{
+
+carrinho.forEach(item => {
+
+html += `
+<div class="cart-item">
+<span>${item.nome}</span>
+<span>R$ ${item.preco.toFixed(2)}</span>
+</div>
+`;
+
+});
+
+}
+
+document.getElementById('cart-items').innerHTML = html;
+
+}
+
+function enviarPedidoWhatsApp(){
+
+if(carrinho.length === 0){
+
+alert("Adicione produtos antes de enviar o pedido!");
+
+return;
+
+}
+
+let texto = "Olá! Gostaria de fazer o seguinte pedido:%0A%0A";
+
+carrinho.forEach(item => {
+
+texto += `- ${item.nome} (R$ ${item.preco.toFixed(2)})%0A`;
+
+});
+
+texto += `%0ATotal: R$ ${total.toFixed(2)}`;
+
+let numero = "5511999999999";
+
+let link = `https://wa.me/${numero}?text=${texto}`;
+
+window.open(link,'_blank');
+
+}
+
+</script>
+
+</body>
+</html>
+```
