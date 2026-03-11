@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gradix - Configurador de Grade</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #0a0a0f;
+            --bg-card: #13131a;
+            --bg-modal: #181822;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hl: rgba(59, 130, 246, 0.3);
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* UTILS */
+        .flex {
+            display: flex;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .grid-cols {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 24px;
+        }
+
+        /* BUTTONS */
+        button {
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            border: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            font-weight: 600;
+            border-radius: 12px;
+            padding: 14px 24px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-icon {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-icon:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* HEADER */
+        header {
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            padding: 16px 24px;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .cart-toggle {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent);
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .cart-toggle:hover {
+            background: rgba(59, 130, 246, 0.15);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: var(--danger);
+            color: white;
+            font-size: 11px;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 700;
+        }
+
+        /* MAIN CONTENT */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        /* CARDS */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-hl);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-tag {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .card-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-price {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        /* MODAL */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal {
+            background: var(--bg-modal);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 480px;
+            max-height: 90vh;
+            /* Limits maximum height */
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+            transform: scale(0.95) translateY(20px);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .overlay.active .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        /* Fixed Header inside Modal */
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            /* Prevents shrinking */
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .modal-info {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            padding-right: 40px;
+        }
+
+        .modal-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .modal-details h2 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .modal-details p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .modal-details .price {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        /* Scrollable Grid inside Modal */
+        .modal-body {
+            padding: 24px 20px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* Custom Scrollbar for Grid */
+        .modal-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .size-row {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            transition: background 0.2s;
+        }
+
+        .size-row:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .size-label {
+            font-weight: 700;
+            font-size: 16px;
+            width: 60px;
+        }
+
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 4px;
+            border-radius: 10px;
+        }
+
+        .qty-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qty-btn:hover {
+            background: var(--border-hl);
+            color: white;
+        }
+
+        .qty-val {
+            font-size: 16px;
+            font-weight: 700;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Fixed Footer inside Modal */
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
+            /* Prevents shrinking */
+        }
+
+        .summary {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding: 12px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid var(--border-hl);
+            border-radius: 10px;
+        }
+
+        .summary-col {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: var(--accent);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .summary-val {
+            font-size: 18px;
+            font-weight: 800;
+            color: white;
+        }
+
+        /* SIDEBAR CART */
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 150;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            max-width: 400px;
+            background: var(--bg-modal);
+            border-left: 1px solid var(--border);
+            z-index: 200;
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-sidebar.open {
+            transform: translateX(0);
+        }
+
+        .cart-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .cart-header h3 {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .cart-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .cart-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .cart-item h4 {
+            font-size: 15px;
+            margin-bottom: 4px;
+            padding-right: 30px;
+        }
+
+        .cart-item-sizes {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .cart-item-price {
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .btn-remove {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .btn-remove:hover {
+            color: var(--danger);
+        }
+
+        .cart-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .cart-footer {
+            padding: 24px;
+            border-top: 1px solid var(--border);
+            background: var(--bg-card);
+        }
+
+        .cart-total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+
+        .cart-total-lbl {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .cart-total-val {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        /* TOAST */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translate(-50%, 20px);
+            background: var(--success);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, 0);
+        }
+
+        @media (max-width: 600px) {
+            main {
+                padding: 24px 16px;
+            }
+
+            .modal {
+                height: 100vh;
+                max-height: 100vh;
+                border-radius: 0;
+                transform: translateY(100%);
+            }
+
+            .overlay.active .modal {
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="flex items-center justify-between">
+        <div class="logo">Grad<span>ix</span></div>
+        <button class="cart-toggle" onclick="toggleCart()">
+            🛒 Meu Pedido
+            <span class="cart-badge" id="cartBadge" style="display:none">0</span>
+        </button>
+    </header>
+
+    <main>
+        <h1 class="page-title">Coleções 2025</h1>
+        <p class="page-subtitle">Selecione os produtos para montar sua grade.</p>
+        <div class="grid-cols" id="productsGrid"></div>
+    </main>
+
+    <!-- MODAL CONFIGURADOR -->
+    <div class="overlay" id="modalOverlay" onclick="fecharModal(event)">
+        <div class="modal" id="modal">
+            <!-- Header Fixo -->
+            <div class="modal-header">
+                <button class="btn-icon modal-close" onclick="fecharModalBtn()">✕</button>
+                <div class="modal-info">
+                    <img src="" id="modalImg" class="modal-img" alt="">
+                    <div class="modal-details">
+                        <p id="modalTag"
+                            style="font-size:11px; color:#3b82f6; font-weight:700; text-transform:uppercase; margin-bottom:2px;">
+                        </p>
+                        <h2 id="modalTitle">Nome do Produto</h2>
+                        <div class="price" id="modalPrice">R$ 0,00</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Corpo com Scroll Interno -->
+            <div class="modal-body">
+                <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;" id="modalDesc"></p>
+                <h3
+                    style="font-size:14px; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; color: var(--text-secondary);">
+                    Configurar Grade</h3>
+                <div id="gradesContainer"></div>
+            </div>
+
+            <!-- Footer Fixo -->
+            <div class="modal-footer">
+                <div class="summary">
+                    <div class="summary-col">
+                        <span class="summary-label">Total de Peças</span>
+                        <span class="summary-val" id="summaryQty">0</span>
+                    </div>
+                    <div class="summary-col" style="text-align: right;">
+                        <span class="summary-label">Valor Total</span>
+                        <span class="summary-val" id="summaryTotal">R$ 0,00</span>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="adicionarAoPedido()">Adicionar ao Pedido</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIDEBAR CARRINHO -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleCart()"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>Seu Pedido</h3>
+            <button class="btn-icon" onclick="toggleCart()">✕</button>
+        </div>
+        <div class="cart-body" id="cartBody"></div>
+        <div class="cart-footer">
+            <div class="cart-total-row">
+                <span class="cart-total-lbl">Total Geral</span>
+                <span class="cart-total-val" id="cartTotalVal">R$ 0,00</span>
+            </div>
+            <!-- Número do representante FIXO - Não usa mais input visual -->
+            <button class="btn-primary" id="btnWhatsapp" onclick="enviarWhatsApp()" disabled
+                style="background:#10b981;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.56-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                </svg>
+                Enviar Pedido por WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">Item adicionado!</div>
+
+    <script>
+        const produtos = [
+            { id: 1, tag: 'INVERNO', nome: 'Conjunto Moletom', desc: 'Conjunto premium super confortável e quente.', preco: 89.90, img: 'https://images.unsplash.com/photo-1519238263530-99abca96738b?w=400&q=80' },
+            { id: 2, tag: 'PRIMAVERA', nome: 'Vestido Floral', desc: 'Vestido leve com estampa exclusiva. Ideal para dias amenos.', preco: 74.90, img: 'https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?w=400&q=80' },
+            { id: 3, tag: 'URBAN', nome: 'Calça Jeans Skinny', desc: 'Jeans com elastano para máximo conforto e mobilidade.', preco: 69.90, img: 'https://images.unsplash.com/photo-1555689502-c4b22d76c56f?w=400&q=80' },
+            { id: 4, tag: 'VERÃO', nome: 'Conjunto Listrado', desc: 'Camiseta + bermuda em tecido respirável vibrante.', preco: 59.90, img: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=400&q=80' },
+            { id: 5, tag: 'PREMIUM', nome: 'Casaco Puffer', desc: 'Casaco com enchimento para dias muito frios.', preco: 119.90, img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&q=80' }
+        ];
+
+        const gradeTamanhos = ['2', '4', '6', '8', '10', '12', '14', '16']; // Extended sizes to show scroll
+        let produtoAtivo = null;
+        let selecaoAtual = {};
+        let carrinho = [];
+
+        function formatMoeda(valor) {
+            return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        function init() {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = produtos.map(p => `
+    <div class="card">
+      <img src="${p.img}" class="card-img" alt="${p.nome}">
+      <div class="card-body">
+        <div class="card-tag">${p.tag}</div>
+        <h3 class="card-title">${p.nome}</h3>
+        <p class="card-desc">${p.desc}</p>
+        <div class="flex items-center justify-between">
+          <div class="card-price">${formatMoeda(p.preco)}</div>
+          <button class="btn-primary" style="width:auto; padding:8px 16px;" onclick="abrirProduto(${p.id})">Grade</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+        }
+
+        function abrirProduto(id) {
+            produtoAtivo = produtos.find(p => p.id === id);
+            selecaoAtual = {};
+            gradeTamanhos.forEach(t => selecaoAtual[t] = 0);
+
+            document.getElementById('modalImg').src = produtoAtivo.img;
+            document.getElementById('modalTag').innerText = produtoAtivo.tag;
+            document.getElementById('modalTitle').innerText = produtoAtivo.nome;
+            document.getElementById('modalDesc').innerText = produtoAtivo.desc;
+            document.getElementById('modalPrice').innerText = formatMoeda(produtoAtivo.preco);
+
+            renderGradeScroll();
+            updateSummary();
+
+            document.getElementById('modalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function fecharModal(e) { if (e.target === document.getElementById('modalOverlay')) fecharModalBtn(); }
+        function fecharModalBtn() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function renderGradeScroll() {
+            const cont = document.getElementById('gradesContainer');
+            cont.innerHTML = gradeTamanhos.map(t => `
+    <div class="size-row">
+      <div class="size-label">Tam ${t}</div>
+      <div class="qty-controls">
+        <button class="qty-btn" onclick="alterarQtd('${t}', -1)">-</button>
+        <div class="qty-val" id="qty-${t}">0</div>
+        <button class="qty-btn" onclick="alterarQtd('${t}', 1)">+</button>
+      </div>
+    </div>
+  `).join('');
+        }
+
+        function alterarQtd(tamanho, delta) {
+            let v = selecaoAtual[tamanho] + delta;
+            if (v < 0) v = 0;
+            selecaoAtual[tamanho] = v;
+            document.getElementById(`qty-${tamanho}`).innerText = v;
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const totalPecas = Object.values(selecaoAtual).reduce((a, b) => a + b, 0);
+            const valorTotal = totalPecas * produtoAtivo.preco;
+
+            document.getElementById('summaryQty').innerText = totalPecas;
+            document.getElementById('summaryTotal').innerText = formatMoeda(valorTotal);
+        }
+
+        function adicionarAoPedido() {
+            const totalPecas = Object.values(selecaoAtual).reduce((a, b) => a + b, 0);
+            if (totalPecas === 0) { alert('Selecione pelo menos uma peça.'); return; }
+
+            const gradeArray = [];
+            gradeTamanhos.forEach(t => {
+                if (selecaoAtual[t] > 0) gradeArray.push(`Tam ${t}: ${selecaoAtual[t]} un`);
+            });
+
+            carrinho.push({
+                id: Date.now(),
+                produtoId: produtoAtivo.id,
+                nome: produtoAtivo.nome,
+                peças: totalPecas,
+                valor: totalPecas * produtoAtivo.preco,
+                gradeTxt: gradeArray.join(' | ')
+            });
+
+            fecharModalBtn();
+            showToast('Produto adicionado ao pedido!');
+            updateCart();
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        function toggleCart() {
+            const sidebar = document.getElementById('cartSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            if (sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+            } else {
+                sidebar.classList.add('open');
+                overlay.classList.add('active');
+            }
+        }
+
+        function updateCart() {
+            const badge = document.getElementById('cartBadge');
+            if (carrinho.length > 0) {
+                badge.style.display = 'flex';
+                badge.innerText = carrinho.length;
+                document.getElementById('btnWhatsapp').disabled = false;
+            } else {
+                badge.style.display = 'none';
+                document.getElementById('btnWhatsapp').disabled = true;
+            }
+
+            const list = document.getElementById('cartBody');
+            if (carrinho.length === 0) {
+                list.innerHTML = '<div class="cart-empty">Seu pedido está vazio.</div>';
+                document.getElementById('cartTotalVal').innerText = formatMoeda(0);
+                return;
+            }
+
+            let html = '';
+            let totalGeral = 0;
+            carrinho.forEach(item => {
+                totalGeral += item.valor;
+                html += `
+      <div class="cart-item">
+        <button class="btn-remove" onclick="removerItem(${item.id})">✕</button>
+        <h4>${item.nome}</h4>
+        <div class="cart-item-sizes">${item.gradeTxt}</div>
+        <div class="cart-item-price">${formatMoeda(item.valor)}</div>
+      </div>
+    `;
+            });
+            list.innerHTML = html;
+            document.getElementById('cartTotalVal').innerText = formatMoeda(totalGeral);
+        }
+
+        function removerItem(id) {
+            carrinho = carrinho.filter(i => i.id !== id);
+            updateCart();
+        }
+
+        function enviarWhatsApp() {
+            if (carrinho.length === 0) return;
+
+            const REP_NUMERO = "5562984110733"; // Número do representante hardcoded e validado
+
+            let totalGeral = 0;
+            let totalPecas = 0;
+            let msg = `*🛍️ NOVO PEDIDO - GRADIX*\n\n`;
+
+            carrinho.forEach((i, idx) => {
+                totalGeral += i.valor;
+                totalPecas += i.peças;
+                msg += `*${idx + 1}. ${i.nome}*\n`;
+                msg += `📦 Grade: ${i.gradeTxt}\n`;
+                msg += `💰 Subtotal: ${formatMoeda(i.valor)}\n\n`;
+            });
+
+            msg += `━━━━━━━━━━━━━━\n`;
+            msg += `📊 Total de Peças: ${totalPecas}\n`;
+            msg += `💸 *VALOR TOTAL: ${formatMoeda(totalGeral)}*\n`;
+
+            const url = `https://api.whatsapp.com/send/?phone=${REP_NUMERO}&text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
+        }
+
+        init();
+        updateCart();
+    </script>
+</body>
+
+</html>
